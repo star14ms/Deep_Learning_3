@@ -1,0 +1,1 @@
+from rich_console.console import print

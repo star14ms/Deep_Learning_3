@@ -3,7 +3,7 @@ from rich import print
 print("Hello, [bold magenta]World[/bold magenta]!", ":vampire:", locals())
 
 
-from rich.console import Console
+from rich_console import Console
 console = Console()
 # try:
 #     raise

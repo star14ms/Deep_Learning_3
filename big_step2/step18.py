@@ -1,10 +1,11 @@
 import numpy as np
 from function import as_array
 import weakref
-from console import print
+from parent import print
 
 import contextlib
 
+# 메모리 절약 모드
 
 class Config:
     enable_backprop = True

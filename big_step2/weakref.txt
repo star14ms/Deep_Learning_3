@@ -1,0 +1,22 @@
+Filename: c:\Users\danal\OneDrive\문서\GitHub\Deep_Learning_3\big_step2\step17.py
+
+Line #    Mem usage    Increment  Occurrences   Line Contents
+=============================================================
+   109     38.2 MiB     38.2 MiB           1   @profile(stream=f1) # stream=f1
+   110                                         def memory_profile(variable, square):
+   111     41.1 MiB    -20.9 MiB          11       for _ in range(10):
+   112     38.8 MiB      0.6 MiB          10           x = variable(np.random.randn(100000))
+   113     41.1 MiB     22.6 MiB          10           _ = square(square(square(x)))
+
+
+Filename: c:\Users\danal\OneDrive\문서\GitHub\Deep_Learning_3\big_step2\step17.py
+
+Line #    Mem usage    Increment  Occurrences   Line Contents
+=============================================================
+   109     38.1 MiB     38.1 MiB           1   @profile(stream=f1) # stream=f1
+   110                                         def memory_profile(variable, square):
+   111     68.6 MiB      0.0 MiB          11       for _ in range(10):
+   112     66.3 MiB      7.6 MiB          10           x = variable(np.random.randn(100000))
+   113     68.6 MiB     22.9 MiB          10           _ = square(square(square(x)))
+
+

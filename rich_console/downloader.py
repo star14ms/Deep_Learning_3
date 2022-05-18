@@ -22,7 +22,7 @@ from rich.progress import (
 )
 
 
-from rich.console import Console
+from rich_console import Console
 console = Console()
 
 

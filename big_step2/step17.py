@@ -11,8 +11,9 @@ from step16 import (
     square as square_old, 
 )
 from rich.syntax import Syntax
-from console import print
+from parent import print
 
+# 메모리 관리와 순환 참조
 
 class Variable():
     def __init__(self, data):
@@ -103,7 +104,7 @@ def square(x):
     return Square()(x)
 
 
-f1=open('big_step2/weakref.txt','w+')
+# f1=open('big_step2/weakref.txt','w+')
 
 @profile(stream=None) # stream=f1
 def memory_profile(variable, square):

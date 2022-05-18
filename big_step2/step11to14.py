@@ -1,5 +1,6 @@
 import numpy as np
 from function import as_array
+from parent import print
 np.set_printoptions(precision=4)
 
 

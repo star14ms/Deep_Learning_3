@@ -1,10 +1,13 @@
 import numpy as np
 from function import as_array
+from parent import print
 from step11to14 import (
     Variable as Variable_old, 
     square as square_old, 
     add as add_old
 )
+
+# 복잡한 계산 그래프
 
 class Variable():
     def __init__(self, data):

@@ -82,7 +82,7 @@ t = np.arange(*s_range)
 
 for i, (result, y_label) in enumerate(zip([output, grads], ['output', 'grads'])):
     for idx, n in enumerate(t.tolist()):
-        axes[i].plot(t, result[idx], label=f'{n}^2')
+        axes[i].plot(t, result[idx], label=f'{n}^x')
         for x_tick in range(len(t)):
            height = result[idx][x_tick]
            axes[i].text(t[x_tick], height + 0.25, '%d' %height, ha='center', va='bottom', size = 12)

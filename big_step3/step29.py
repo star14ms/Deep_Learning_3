@@ -31,7 +31,7 @@ for i in range(iters):
     x.data -= x.grad / gx2(x.data)
 
 
-# 그래프로 시각화
+# 함수 최적화 과정 시각화
 x = np.arange(-2.1, 2.1, 0.01)
 y = f(x)
 plt.plot(x, y, info_x, info_y)

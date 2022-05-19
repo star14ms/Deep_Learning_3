@@ -1,5 +1,7 @@
 import numpy as np
 import math
+from parent import print
+from dezero.utils import plot_dot_graph
 from dezero import Variable, Function
 
 
@@ -34,9 +36,6 @@ def my_sin(x, threshold=0.0001) -> Variable:
 
 
 if __name__ == '__main__':
-    from parent import print
-    from dezero.utils import plot_dot_graph
-
 
     for threshold in [0.0001, 1e-150]:
         x = Variable(np.array(np.pi/4), name='x')
@@ -50,6 +49,6 @@ if __name__ == '__main__':
         print('x.grad', x.grad)
         print('1/np.sqrt(2)', 1/np.sqrt(2), '\n')
 
-        plot_dot_graph(y, verbose=False, to_file=f'big_step3/graph/sin_taylor_th_{threshold}.png')
+        plot_dot_graph(y, verbose=False, to_file=f'big_step3/graph/step27_sin_taylor_th_{threshold}.png')
         
         x.cleargrad()

@@ -19,5 +19,5 @@ if __name__ == '__main__':
     print('x.grad', x.grad)
     print('y.grad', y.grad, '\n')
     
-    plot_dot_graph(z, verbose=False, to_file='big_step3/graph/goldstein.png')
-    plot_dot_graph(z, verbose=True, to_file='big_step3/graph/goldstein_verbose.png')
+    plot_dot_graph(z, verbose=False, to_file='big_step3/graph/step26_goldstein.png')
+    plot_dot_graph(z, verbose=True, to_file='big_step3/graph/step26_goldstein_verbose.png')

@@ -162,6 +162,15 @@ class Function():
         raise NotImplementedError
 
 
+class Add(Function):
+    def forward(self, x0, x1):
+        y = x0 + x1
+        return (y,)
+
+    def backward(self, gy):
+        return gy, gy
+
+
 class Mul(Function):
     def forward(self, x0, x1):
         y = x0 * x1
@@ -170,15 +179,6 @@ class Mul(Function):
     def backward(self, gy):
         x0, x1 = self.inputs[0].data, self.inputs[1].data
         return x1 * gy, x0 * gy
-
-
-class Add(Function):
-    def forward(self, x0, x1):
-        y = x0 + x1
-        return (y,)
-
-    def backward(self, gy):
-        return gy, gy
 
 
 class Neg(Function):

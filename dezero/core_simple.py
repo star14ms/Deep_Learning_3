@@ -6,6 +6,7 @@ import contextlib
 
 class Config:
     enable_backprop = True
+    Variable_name_auto_gen = False
 
     
 @contextlib.contextmanager
@@ -20,6 +21,10 @@ def using_config(name, value):
 
 def no_grad():
     return using_config('enable_backprop', False)
+
+
+def vname_auto_gen():
+    return using_config('Variable_name_auto_gen', True)
 
 
 def as_array(x):
@@ -42,8 +47,12 @@ class Variable():
                 raise TypeError('{}은(는) 지원하지 않습니다.'.format(type(data)))
 
         self.data = data
-        if name is None and self.data.ndim == 0:
-            self.name = str(self.data.tolist())
+        if Config.Variable_name_auto_gen and name is None and data.ndim == 0:
+            scalar = data.tolist()
+            if isinstance(scalar, int) or scalar.is_integer() or len(str(scalar)) < 2+6:
+                self.name = str(scalar)
+            else:
+                self.name = np.format_float_scientific(scalar, precision=2, exp_digits=2)
         else:
             self.name = name
         self.grad = None

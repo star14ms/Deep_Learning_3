@@ -1,3 +1,4 @@
+from re import X
 import numpy as np
 import weakref
 import contextlib
@@ -41,7 +42,10 @@ class Variable():
                 raise TypeError('{}은(는) 지원하지 않습니다.'.format(type(data)))
 
         self.data = data
-        self.name = name
+        if name is None and self.data.ndim == 0:
+            self.name = str(self.data.tolist())
+        else:
+            self.name = name
         self.grad = None
         self.creator = None
         self.generation = 0

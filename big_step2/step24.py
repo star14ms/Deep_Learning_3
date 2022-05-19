@@ -27,33 +27,34 @@ def goldstein(x, y):
     return z
 
 
-xs = (i for i in range(1, 100+1))
-print(sys.getsizeof(xs), 'bytes')
-xs = [Variable(np.array(x)) for x in xs]
-print(sys.getsizeof(xs), 'bytes')
-
-z = sphere_general(*xs)
-z.backward()
-
-print(f'{sphere_general.__name__}({xs})', z)
-
-for dim, x in enumerate(xs):
-  print(f'{dim+1}th_dim.grad', xs[dim].grad, end="\r")
-  time.sleep(0.025)
-print('\n')
-
-
-x = Variable(np.array(1.0))
-y = Variable(np.array(1.0))
-
-for func in [matyas, goldstein]:
-    z = func(x, y)
+if __name__ == '__main__':
+    xs = (i for i in range(1, 100+1))
+    print(sys.getsizeof(xs), 'bytes')
+    xs = [Variable(np.array(x)) for x in xs]
+    print(sys.getsizeof(xs), 'bytes')
+    
+    z = sphere_general(*xs)
     z.backward()
     
-    print(f'{func.__name__}(1,1)', z)
-    print('x.grad', x.grad)
-    print('y.grad', y.grad, '\n')
+    print(f'{sphere_general.__name__}({xs})', z)
     
-    x.cleargrad()
-    y.cleargrad()
+    for dim, x in enumerate(xs):
+        print(f'{dim+1}th_dim.grad', xs[dim].grad, end="\r")
+        time.sleep(0.025)
+    print('\n')
+    
+    
+    x = Variable(np.array(1.0))
+    y = Variable(np.array(1.0))
+    
+    for func in [matyas, goldstein]:
+        z = func(x, y)
+        z.backward()
+        
+        print(f'{func.__name__}(1,1)', z)
+        print('x.grad', x.grad)
+        print('y.grad', y.grad, '\n')
+        
+        x.cleargrad()
+        y.cleargrad()
 

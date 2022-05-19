@@ -1,0 +1,26 @@
+import numpy as np
+from parent import print
+from dezero import Variable
+from dezero.utils import plot_dot_graph
+from big_step2.step24 import goldstein
+
+
+if __name__ == '__main__':
+    x = np.array(1.0)
+
+    x = Variable(np.array(1))
+    y = Variable(np.array(1))
+    z = goldstein(x, y)
+    z.backward()
+    
+    x.name = 'x = 1'
+    y.name = 'y = 1'
+    z.name = f'z = {z.data}'
+
+    print(f'{goldstein.__name__}(1,1)', z)
+    print('x.grad', x.grad)
+    print('y.grad', y.grad, '\n')
+    
+    plot_dot_graph(z, verbose=False, to_file='big_step3/goldstein.png')
+    plot_dot_graph(z, verbose=True, to_file='big_step3/goldstein_verbose.png')
+

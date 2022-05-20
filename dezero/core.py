@@ -1,7 +1,7 @@
-from re import X
 import numpy as np
 import weakref
 import contextlib
+import dezero
 
 
 class Config:
@@ -123,6 +123,10 @@ class Variable():
     def shape(self):
         return self.data.shape
 
+    @property
+    def T(self):
+        return dezero.functions.transpose(self)
+
     def __len__(self):
         return len(self.data)
 
@@ -132,6 +136,22 @@ class Variable():
         else:
             p = str(self.data).replace('\n', '\n'+ ' '*9)
             return f'Variable({p})'
+    
+    def reshape(self, *shape):
+        if len(shape) == 1 and isinstance(shape[0], (tuple, list)):
+            shape = shape[0]
+        return dezero.functions.reshape(self, shape)
+
+    def transpose(self, *axes):
+        if len(axes) == 0:
+            axes = None
+        elif len(axes) == 1:
+            if isinstance(axes[0], (tuple, list)) or axes[0] is None:
+                axes = axes[0]
+        return dezero.functions.transpose(self, axes)
+
+    def sum(self, axis=None, keepdims=False):
+        return dezero.functions.sum(self, axis, keepdims)
 
 
 class Function():
@@ -163,11 +183,16 @@ class Function():
 
 class Add(Function):
     def forward(self, x0, x1):
+        self.x0_shape, self.x1_shape = x0.shape, x1.shape
         y = x0 + x1
-        return (y,)
+        return y
 
     def backward(self, gy):
-        return gy, gy
+        gx0, gx1 = gy, gy
+        if self.x0_shape != self.x1_shape:
+            gx0 = dezero.functions.sum_to(gx0, self.x0_shape)
+            gx1 = dezero.functions.sum_to(gx1, self.x1_shape)
+        return gx0, gx1
 
 
 class Mul(Function):

@@ -1,7 +1,18 @@
 import numpy as np
-
+import cuda
 from .core import Function, as_variable
 from . import utils
+
+
+class Exp(Function):
+    def forward(self, x):
+        y = np.exp(x)
+        return y
+
+    def backward(self, gy):
+        x = self.inputs[0].data
+        gx = np.exp(x) * gy
+        return gx
 
 
 class Sin(Function):
@@ -86,6 +97,7 @@ class Sum(Function):
     def forward(self, x):
         self.x_shape = x.shape
         y = x.sum(axis=self.axis, keepdims=self.keepdims)
+        # print(type(x), type(x.sum()))
         return y
 
     def backward(self, gy):
@@ -120,6 +132,64 @@ class BroadcastTo(Function):
     def backward(self, gy):
         gx = sum_to(gy, self.x_shape)
         return gx
+
+
+class MatMul(Function):
+    def forward(self, x, W):
+        y = x.dot(W)
+        return y
+
+    def backward(self, gy):
+        x, W = self.inputs
+        gx = matmul(gy, W.T)
+        gW = matmul(x.T, gy)
+        return gx, gW
+
+
+class Linear(Function):
+    def forward(self, x, W, b):
+        y = x.dot(W)
+        if b is not None:
+            y += b
+        return y
+
+    def backward(self, gy):
+        x, W, b = self.inputs
+        gb = None if b.data is None else sum_to(gy, b.shape)
+        gx = matmul(gy, W.T)
+        gW = matmul(x.T, gy)
+        return gx, gW, gb
+
+
+class Sigmoid(Function):
+    def forward(self, x):
+        # xp = cuda.get_array_module(x)
+        y = 1 / (1 + np.exp(-x))
+        # y = xp.tanh(x * 0.5) * 0.5 + 0.5  # Better implementation
+        return y
+
+    def backward(self, gy):
+        y = self.outputs[0]()
+        gx = gy * y * (1 - y)
+        return gx
+
+
+class MeanSquaredError(Function):
+    def forward(self, x0, x1):
+        diff = x0 - x1
+        y = (diff ** 2).sum() / len(diff)
+        return y
+
+    def backward(self, gy):
+        x0, x1 = self.inputs
+        diff = x0 - x1
+        gx0 = gy * diff * (2. / len(diff))
+        gx1 = -gx0
+        return gx0, gx1
+
+
+def exp(x):
+    return Exp()(x)
 
 
 def sin(x):
@@ -162,3 +232,19 @@ def broadcast_to(x, shape):
     if x.shape == shape:
         return as_variable(x)
     return BroadcastTo(shape)(x)
+
+
+def matmul(x, W):
+    return MatMul()(x, W)
+
+
+def sigmoid(x):
+    return Sigmoid()(x)
+
+
+def linear(x, W, b=None):
+    return Linear()(x, W, b)
+
+
+def mean_squared_error(x0, x1):
+    return MeanSquaredError()(x0, x1)

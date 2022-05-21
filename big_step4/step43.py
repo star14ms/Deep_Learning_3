@@ -7,10 +7,11 @@ import dezero.functions as F
 
 # 신경망
 
+
+# 데이터셋
 np.random.seed(0)
 x = np.random.rand(100, 1)
 y = np.sin(2 * np.pi * x) + np.random.rand(100, 1)
-# x, y = Variable(x), Variable(y)
 
 
 # 가중치 초기화
@@ -37,7 +38,7 @@ def sigmoid_simple(x):
     return y
 
 
-# 신경망 학습
+# 신경망 추론
 def predict(x):
     y = F.linear(x, W1, b1)
     y = F.sigmoid(y)
@@ -48,7 +49,7 @@ def predict(x):
 lr = 0.2
 iters = 10000
 
-
+# 신경망 학습
 for i in range(iters):
     y_pred = predict(x)
     loss = F.mean_squared_error(y, y_pred)

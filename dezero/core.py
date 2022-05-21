@@ -1,6 +1,11 @@
 import numpy as np
 import weakref
 import contextlib
+
+if '__file__' in globals():
+    import os, sys
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 import dezero
 
 
@@ -154,6 +159,10 @@ class Variable():
         return dezero.functions.sum(self, axis, keepdims)
 
 
+class Parameter(Variable):
+    pass
+
+
 class Function():
     def __call__(self, *inputs):
         inputs = [as_variable(x) for x in inputs]
@@ -175,10 +184,10 @@ class Function():
         return outputs if len(outputs) > 1 else outputs[0]
         
     def forward(self, x):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def backward(self, gy):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
 class Add(Function):
@@ -291,3 +300,5 @@ def setup_variable():
     Variable.__truediv__ = div
     Variable.__rtruediv__ = rdiv
     Variable.__pow__ = pow
+    
+    Variable.__getitem__ = dezero.functions.get_item

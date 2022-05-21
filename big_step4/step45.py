@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from parent import print
-from dezero import Model
+from dezero import Model, Variable
+from dezero.core import vname_auto_gen
 import dezero.layers as L
 import dezero.functions as F
 import dezero.models as M
@@ -11,7 +12,7 @@ import dezero.models as M
 
 # 데이터셋
 np.random.seed(0)
-x = np.random.rand(100, 1)
+x = np.random.rand(100, 1).astype(np.float32)
 y = np.sin(2 * np.pi * x) + np.random.rand(100, 1)
 
 
@@ -33,8 +34,9 @@ class TwoLayerNet(Model):
         return y
 
 
-model = TwoLayerNet(hidden_size, 1)    
+model = TwoLayerNet(hidden_size, 1)
 # model = M.MLP((10, 20, 10, 1))
+model.plot(x, to_file='big_step4/model.png')
 
 
 # 학습 시작

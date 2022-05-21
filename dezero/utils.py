@@ -65,9 +65,10 @@ def plot_dot_graph(output, verbose=True, to_file='graph.png'):
         f.write(dot_graph)
 
     # 저장할 폴더 생성
-    to_dir = '/'.join(to_file.split('/')[:2])
-    if not os.path.exists(to_dir):
-        os.mkdir(to_dir)
+    if '/' in to_file:
+        to_dir = '/'.join(to_file.split('/')[:-1])
+        if not os.path.exists(to_dir):
+            os.mkdir(to_dir)
 
     # dot 명령 호출
     extension = os.path.splitext(to_file)[1][1:]

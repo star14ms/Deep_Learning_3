@@ -142,6 +142,36 @@ class Variable():
             p = str(self.data).replace('\n', '\n'+ ' '*9)
             return f'Variable({p})'
     
+    def __eq__(self, other): # 항등 연산자, == 에 대한 동작을 정의합니다.
+        if isinstance(other, Variable):
+            other = other.data
+        return self.data == other
+
+    def __ne__(self, other): # 부등호 연산자, != 에 대한 동작을 정의합니다.
+        if isinstance(other, Variable):
+            other = other.data
+        return self.data != other
+    
+    def __lt__(self, other): # 보다 작음 연산자, < 에 대한 동작을 정의합니다.
+        if isinstance(other, Variable):
+            other = other.data
+        return self.data < other
+    
+    def __gt__(self, other): # 보다 큼 연산자, > 에 대한 동작을 정의합니다.
+        if isinstance(other, Variable):
+            other = other.data
+        return self.data > other
+    
+    def __le__(self, other): # 보다 작거나 같음 연산자, <= 에 대한 동작을 정의합니다.
+        if isinstance(other, Variable):
+            other = other.data
+        return self.data <= other
+    
+    def __ge__(self, other): # 크거나 같음 연산자, >= 에 대한 동작을 정의합니다.
+        if isinstance(other, Variable):
+            other = other.data
+        return self.data >= other
+
     def reshape(self, *shape):
         if len(shape) == 1 and isinstance(shape[0], (tuple, list)):
             shape = shape[0]
@@ -158,7 +188,15 @@ class Variable():
     def sum(self, axis=None, keepdims=False):
         return dezero.functions.sum(self, axis, keepdims)
 
+    def to_cpu(self):
+        if self.data is not None:
+            self.data = dezero.cuda.as_numpy(self.data)
 
+    def to_gpu(self):
+        if self.data is not None:
+            self.data = dezero.cuda.as_cupy(self.data)
+
+    
 class Parameter(Variable):
     pass
 

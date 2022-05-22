@@ -1,6 +1,6 @@
 import numpy as np
 from dezero import cuda, utils
-from dezero.core import Function, as_variable
+from dezero.core import Variable, Function, as_variable, as_array
 
 
 class Exp(Function):
@@ -218,6 +218,19 @@ class Sigmoid(Function):
         return gx
 
 
+class ReLU(Function):
+    def forward(self, x):
+        xp = cuda.get_array_module(x)
+        y = xp.maximum(x, 0.0)
+        return y
+
+    def backward(self, gy):
+        x, = self.inputs
+        mask = x.data > 0
+        gx = gy * mask
+        return gx
+
+
 class Softmax(Function):
     def __init__(self, axis=1):
         self.axis = axis
@@ -352,7 +365,11 @@ def matmul(x, W):
 def sigmoid(x):
     return Sigmoid()(x)
 
-    
+
+def relu(x):
+    return ReLU()(x)
+
+
 def softmax_simple(x, axis=1):
     x = as_variable(x)
     y = exp(x)
@@ -377,6 +394,19 @@ def softmax_cross_entropy_simple(x, t):
 
 def softmax_cross_entropy(x, t):
     return SoftmaxCrossEntropy()(x, t)
+
+
+def accuracy(y, t):
+    """
+    [WAR] This function is not differentiable.
+    """
+    y, t = as_variable(y), as_variable(t)
+
+    pred = y.data.argmax(axis=1).reshape(t.shape)
+    result = (pred == t.data)
+    acc = result.mean()
+    return Variable(as_array(acc))
+
 
 def linear(x, W, b=None):
     return Linear()(x, W, b)

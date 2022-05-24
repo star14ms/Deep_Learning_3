@@ -1,4 +1,5 @@
 import numpy as np
+import dezero
 from dezero import cuda, utils
 from dezero.core import Variable, Function, as_variable, as_array
 
@@ -414,6 +415,19 @@ def accuracy(y, t):
     return Variable(as_array(acc))
 
 
+def dropout(x, dropout_ratio=0.5):
+    x = as_variable(x)
+
+    if dezero.Config.train:
+        xp = cuda.get_array_module(x)
+        mask = xp.random.rand(*x.shape) > dropout_ratio
+        scale = xp.array(1.0 - dropout_ratio).astype(x.dtype)
+        y = x * mask / scale
+        return y
+    else:
+        return x
+
+
 def linear(x, W, b=None):
     return Linear()(x, W, b)
 
@@ -424,3 +438,23 @@ def mean_squared_error(x0, x1):
 
 def clip(x, x_min, x_max):
     return Clip(x_min, x_max)(x)
+
+
+# =============================================================================
+# conv2d / col2im / im2col / basic_math
+# =============================================================================
+from dezero.functions_conv import conv2d
+from dezero.functions_conv import deconv2d
+from dezero.functions_conv import conv2d_simple
+from dezero.functions_conv import im2col
+from dezero.functions_conv import col2im
+from dezero.functions_conv import pooling_simple
+from dezero.functions_conv import pooling
+from dezero.functions_conv import average_pooling
+from dezero.core import add
+from dezero.core import sub
+from dezero.core import rsub
+from dezero.core import mul
+from dezero.core import div
+from dezero.core import neg
+from dezero.core import pow

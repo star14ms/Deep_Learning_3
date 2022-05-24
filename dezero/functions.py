@@ -5,12 +5,14 @@ from dezero.core import Variable, Function, as_variable, as_array
 
 class Exp(Function):
     def forward(self, x):
-        y = np.exp(x)
+        xp = cuda.get_array_module(x)
+        y = xp.exp(x)
         return y
 
     def backward(self, gy):
         x = self.inputs[0].data
-        gx = np.exp(x) * gy
+        xp = cuda.get_array_module(x)
+        gx = xp.exp(x) * gy
         return gx
 
 
@@ -28,7 +30,8 @@ class Log(Function):
 
 class Sin(Function):
     def forward(self, x):
-        y = np.sin(x)
+        xp = cuda.get_array_module(x)
+        y = xp.sin(x)
         return y
     
     def backward(self, gy):
@@ -39,7 +42,8 @@ class Sin(Function):
 
 class Cos(Function):
     def forward(self, x):
-        y = np.cos(x)
+        xp = cuda.get_array_module(x)
+        y = xp.cos(x)
         return y
 
     def backward(self, gy):
@@ -50,7 +54,8 @@ class Cos(Function):
 
 class Tanh(Function):
     def forward(self, x):
-        y = np.tanh(x)
+        xp = cuda.get_array_module(x)
+        y = xp.tanh(x)
         return y
 
     def backward(self, gy):
@@ -121,10 +126,10 @@ class GetItemGrad(Function):
 
     def forward(self, gy):
         xp = cuda.get_array_module(gy)
-        gx = np.zeros(self.in_shape, dtype=gy.dtype)
+        gx = xp.zeros(self.in_shape, dtype=gy.dtype)
 
         if xp is np:
-            xp.add.at(gx, self.slices, gy)
+            np.add.at(gx, self.slices, gy)
         else:
             xp.scatter_add(gx, self.slices, gy)
         return gx
@@ -170,7 +175,8 @@ class BroadcastTo(Function):
 
     def forward(self, x):
         self.x_shape = x.shape
-        y = np.broadcast_to(x, self.shape)
+        xp = cuda.get_array_module(x)
+        y = xp.broadcast_to(x, self.shape)
         return y
 
     def backward(self, gy):
@@ -208,7 +214,7 @@ class Linear(Function):
 class Sigmoid(Function):
     def forward(self, x):
         xp = cuda.get_array_module(x)
-        # y = 1 / (1 + np.exp(-x))
+        # y = 1 / (1 + xp.exp(-x))
         y = xp.tanh(x * 0.5) * 0.5 + 0.5  # Better implementation
         return y
 

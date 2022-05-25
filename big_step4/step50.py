@@ -26,7 +26,7 @@ save_animation = False # 결정 경계 변화 과정 애니메이션으로 저�
 train_set = dezero.datasets.Spiral(train=True)
 test_set = dezero.datasets.Spiral(train=False)
 train_loader = DataLoader(train_set, batch_size)
-test_loader = DataLoader(test_set, batch_size)
+test_loader = DataLoader(test_set, batch_size, shuffle=False)
 
 model = MLP((hidden_size, 3))
 optimizer = optimizers.SGD(lr).setup(model)

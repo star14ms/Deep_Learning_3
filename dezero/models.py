@@ -7,7 +7,10 @@ import dezero.layers as L
 
 class Model(Layer):
     def plot(self, *inputs, to_file='model.png'):
-        y = self.forward(*inputs)
+        try:
+            y = self.forward(*inputs)
+        except NotImplementedError:
+            y = self(*inputs)
         return utils.plot_dot_graph(y, verbose=True, to_file=to_file)
     
 

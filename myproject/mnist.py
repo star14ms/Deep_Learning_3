@@ -5,35 +5,62 @@ import matplotlib.pyplot as plt
 from parent import print
 import dezero.datasets
 from dezero import DataLoader, optimizers, no_grad, cuda
-from dezero.models import MLP
+from dezero.models import Model, MLP
 import dezero.functions as F
+import dezero.layers as L
+from dezero.transforms import Compose, Flatten, ToFloat, Normalize
+from rich.progress import track
+
 
 from plot import (
     animate_training_info, 
     plot_training_info,
 )
 
+# 모델 정의
+class ConvNet(Model):
+    def __init__(self):
+        super().__init__()
+        # self.conv1 = L.Conv2d(16, kernel_size=3, stride=1, pad=1)
+        # self.conv2 = L.Conv2d(16, kernel_size=3, stride=1, pad=1)
+        # self.conv3 = L.Conv2d(32, kernel_size=3, stride=1, pad=1)
+        # self.conv4 = L.Conv2d(32, kernel_size=3, stride=1, pad=2)
+        self.fc5 = L.Linear(1)
+        self.fc6 = L.Linear(1)
+        self.fc7 = L.Linear(10)
 
-# MNIST 학습
+    def forward(self, x):
+        # x = F.relu(self.conv1(x))
+        # x = F.relu(self.conv2(x))
+        # x = F.pooling(x, 2, 2)
+
+        # x = F.relu(self.conv3(x))
+        # x = F.relu(self.conv4(x))
+        # x = F.pooling(x, 2, 2)
+
+        # x = F.reshape(x, (x.shape[0], -1))
+        x = F.dropout(F.relu(self.fc5(x)))
+        x = F.dropout(F.relu(self.fc6(x)))
+        x = self.fc7(x)
+        return x
 
 
 # 하이퍼파라미터 설정
 max_epoch = 10
 batch_size = 100
-hidden_size = 1000
-lr = 1.0
-save_path = 'big_step5/my_mlp.npz'
+lr = 0.1
+save_path = 'myproject/mnist_model.npz'
 
 
 # 데이터 읽기, 모델, 옵티마이저 생성
-train_set = dezero.datasets.MNIST(train=True)
-test_set = dezero.datasets.MNIST(train=False)
+train_set = dezero.datasets.MNIST(train=True, transform=Compose([Flatten(), ToFloat(), Normalize(0., 255.)]))
+test_set = dezero.datasets.MNIST(train=False, transform=Compose([Flatten(), ToFloat(), Normalize(0., 255.)]))
 train_loader = DataLoader(train_set, batch_size)
-test_loader = DataLoader(test_set, batch_size, shuffle=False)
+test_loader = DataLoader(test_set, batch_size)
 print('학습 데이터 불러오기 완료!')
 
-model = MLP((hidden_size, 10), activation=F.relu)
-optimizer = optimizers.SGD(lr).setup(model)
+model = ConvNet()
+optimizer = optimizers.MomentumSGD(lr).setup(model)
 
 
 if os.path.exists(save_path):
@@ -51,12 +78,17 @@ losses_train, accs_train = [], []
 losses_test, accs_test = [], []
 wrong_idxs, ys, ts = [], [], []
 
+
 print('학습 시작!')
 for epoch in range(max_epoch):
+    train_loader_tracking = track(
+        train_loader, total=train_loader.max_iter, 
+        description=f'epoch {epoch+1} / {max_epoch}'
+    )
     start = time.perf_counter()
     sum_loss, sum_acc = 0, 0
 
-    for x, t in train_loader:
+    for x, t in train_loader_tracking:
         y = model(x)
         loss = F.softmax_cross_entropy(y, t)
         acc = F.accuracy(y, t)
@@ -108,7 +140,7 @@ plt.show()
 
 # 애니메이션
 animation = animate_training_info(*info,
-    video_time_sec=10, save=True, save_path='big_step5/MNIST_train_info.gif'
+    video_time_sec=10, save=True, save_path='myproject/MNIST_train_info.gif'
 )
 plt.get_current_fig_manager().window.showMaximized()
 plt.show()

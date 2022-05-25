@@ -1,4 +1,4 @@
-from rich_console import Console
+from console import Console
 from rich.progress import track, Progress, SpinnerColumn, TimeElapsedColumn
 import time
 

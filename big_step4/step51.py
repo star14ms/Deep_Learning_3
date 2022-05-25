@@ -26,7 +26,7 @@ lr = 1.0
 train_set = dezero.datasets.MNIST(train=True)
 test_set = dezero.datasets.MNIST(train=False)
 train_loader = DataLoader(train_set, batch_size)
-test_loader = DataLoader(test_set, batch_size)
+test_loader = DataLoader(test_set, batch_size, shuffle=False)
 
 model = MLP((hidden_size, 10), activation=F.relu)
 optimizer = optimizers.SGD(lr).setup(model)

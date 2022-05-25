@@ -432,7 +432,7 @@ def linear(x, W, b=None):
     return Linear()(x, W, b)
 
 
-def mean_squared_error(x0, x1):
+def mean_squared_error(x0, x1) -> Variable:
     return MeanSquaredError()(x0, x1)
 
 
